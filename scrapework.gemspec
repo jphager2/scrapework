@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
     Framework for mapping ruby objects to web resources,
     which you can then manipulate.
   SUMMARY
-  spec.description = <<~DESCRIPTION
+  spec.description = <<~DESCRIPTION.tr("\n", '')
     Framework for mapping ruby objects to web resources,
     which you can then manipulate.
   DESCRIPTION
@@ -46,6 +46,10 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
+
+  spec.add_dependency 'active_attr'
+  spec.add_dependency 'activesupport'
+  spec.add_dependency 'nokogiri'
 
   spec.add_development_dependency 'bundler', '~> 1.17'
   spec.add_development_dependency 'rake', '~> 10.0'
