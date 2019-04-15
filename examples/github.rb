@@ -4,9 +4,6 @@ require 'scrapework'
 
 # Mapping for repo tab (paginated
 class RepositoryTabPage < Scrapework::Object
-  # TODO: has_one
-  attribute :next_page
-
   has_many :repositories
 
   map :repositories do |html|
@@ -15,11 +12,12 @@ class RepositoryTabPage < Scrapework::Object
     end
   end
 
-  # TODO: pagination
-  map :next_page do |html|
-    page = html.css('.paginate-container .btn:nth-of-type(2)').first
+  paginate do |html|
+    pages = html.css('.paginate-container .btn')
 
-    RepositoryTabPage.new(url: page['href']) if page && page['href'].present?
+    pages.map do |page|
+      { url: page['href'] } if page && page['href'].present?
+    end
   end
 end
 
