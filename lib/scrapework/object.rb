@@ -22,6 +22,8 @@ module Scrapework
       mapped_method = "_mapped_#{object}"
       reflection_class = options.fetch(:class) { object.to_s.classify }.to_s
 
+      attr_writer object
+
       define_method(object) do
         return instance_variable_get(ivar) if instance_variable_defined?(ivar)
 
@@ -45,6 +47,8 @@ module Scrapework
         objects.to_s.singularize.classify
       end.to_s
       inverse_reflection = self.class.name.underscore
+
+      attr_writer objects
 
       define_method(objects) do
         return instance_variable_get(ivar) if instance_variable_defined?(ivar)
@@ -76,6 +80,8 @@ module Scrapework
       reflection_class = options.fetch(:class) { object.to_s.classify }.to_s
       inverse_reflection = self.class.name.underscore
 
+      attr_writer object
+
       define_method(object) do
         return instance_variable_get(ivar) if instance_variable_defined?(ivar)
 
@@ -96,9 +102,11 @@ module Scrapework
     # rubocop:enable Metrics/AbcSize
 
     def self.paginate(&block)
-      mapped_method = :_mapped_pagination
+      mapped_method = :_pagination
 
-      map(:pagination, &block)
+      define_method(mapped_method) do
+        @_pagination ||= block.call(_document)
+      end
 
       define_method(:prev_page) do
         pages = __send__(mapped_method)
@@ -113,8 +121,6 @@ module Scrapework
 
     def self.map(name, &block)
       mapped_method = :"_mapped_#{name}"
-
-      attr_writer name unless attributes.key?(name.to_s)
 
       define_method(mapped_method) do
         value = instance_exec(_document, &block)
