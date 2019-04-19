@@ -105,7 +105,7 @@ module Scrapework
       mapped_method = :_pagination
 
       define_method(mapped_method) do
-        @_pagination ||= block.call(_document)
+        @_pagination ||= instance_exec(_document, &block)
       end
 
       define_method(:prev_page) do
