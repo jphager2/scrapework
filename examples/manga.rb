@@ -5,6 +5,37 @@ require 'scrapework'
 # This example sets up several data types and uses them
 # to download every chapter of a manga.
 
+# A manga list web page
+class MangaList < Scrapework::Object
+  has_many :manga, class: 'Manga'
+
+  # Will not return the array of full collection
+  def each(*args, &block)
+    manga.each(*args, &block)
+
+    next_page&.each(*args, &block)
+  end
+
+  map 'manga' do |html|
+    html.css('.update_item h3 a').map do |a|
+      { uri: a['href'], title: a.text.strip }
+    end
+  end
+
+  paginate do |html|
+    pages = html.css('.group-page a').to_a[1..-2]
+    current = pages.find_index { |p| p['class'] == 'pageselect' }
+
+    prev_page_link = pages[current - 1] if current
+    next_page_link = pages[current + 1] if current
+
+    prev_page = { url: prev_page_link['href'] } if prev_page_link
+    next_page = { url: next_page_link['href'] } if next_page_link
+
+    [prev_page, next_page]
+  end
+end
+
 # A manga web page
 class Manga < Scrapework::Object
   attribute :title

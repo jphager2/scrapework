@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    scrapework (0.1.0)
+    scrapework (0.1.1)
       active_attr
       activesupport
       nokogiri
