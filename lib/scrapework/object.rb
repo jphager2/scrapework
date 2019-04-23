@@ -123,7 +123,11 @@ module Scrapework
       mapped_method = :"_mapped_#{name}"
 
       define_method(mapped_method) do
-        value = instance_exec(_document, &block)
+        value = begin
+                  instance_exec(_document, &block)
+                rescue StandardError => e
+                  raise MappingError, e.message
+                end
 
         public_send("#{name}=", value)
       end
