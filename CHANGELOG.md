@@ -1,3 +1,7 @@
+# 0.1.3
+
+  * Improve error message a bit
+
 # 0.1.2
 
   * Error in mapped attribute raises `Scrapework::MappingError`

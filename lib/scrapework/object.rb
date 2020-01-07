@@ -7,6 +7,7 @@ require 'active_support/all'
 
 module Scrapework
   # Base class for web data type
+  # rubocop:disable Metrics/ClassLength
   class Object
     include ActiveAttr::Model
 
@@ -17,6 +18,7 @@ module Scrapework
     end
 
     # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def self.belongs_to(object, options = {})
       ivar = "@#{object}"
       mapped_method = "_mapped_#{object}"
@@ -36,6 +38,7 @@ module Scrapework
 
       reflections[object] = { type: 'belongs_to', class: reflection_class }
     end
+    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Naming/PredicateName
@@ -101,6 +104,8 @@ module Scrapework
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
 
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def self.paginate(&block)
       mapped_method = :_pagination
 
@@ -118,6 +123,8 @@ module Scrapework
         self.class.new(pages[1]) if pages[1]
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def self.map(name, &block)
       mapped_method = :"_mapped_#{name}"
@@ -126,7 +133,7 @@ module Scrapework
         value = begin
                   instance_exec(_document, &block)
                 rescue StandardError => e
-                  raise MappingError, e.message
+                  raise MappingError, "failed to scrape `#{name}`: #{e.message}"
                 end
 
         public_send("#{name}=", value)
@@ -156,3 +163,4 @@ module Scrapework
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
